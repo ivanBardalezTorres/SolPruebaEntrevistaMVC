@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "ListaPais";
+}
+
+
+<body>
+    <div class="col-lg-12">
+        <div class="center-block">
+
+            @if (ViewBag.lstPais != null)
+            {
+                var listaPaises = ViewBag.lstPais;
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <h3>Lista Paises : API RESTfull</h3>
+                        <ul class="list-group">
+                            @foreach (var pais in listaPaises)
+                            {
+                                <li class="list-group-item">
+                                    @pais.uctry_code - @pais.uctry_title
+                                </li>
+                            }
+                        </ul>
+
+                    </div>
+
+
+                </div>
+
+                <script src="/static/js/bootstrap.js"></script>
+            }
+        </div>
+    </div>
+</body>

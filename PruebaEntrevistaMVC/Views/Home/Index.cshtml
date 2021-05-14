@@ -1,0 +1,143 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+
+}
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+    <script src="/static/js/bootstrap.js"></script>
+
+
+    <script>
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toGMTString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function checkCookie(str) {
+            //alert(str);
+            //str = getCookie("NombrePais");
+            //30 son los días que estarán activo las cookies
+            setCookie("NombrePais", str, 30);
+        }
+
+    </script>
+</head>
+<body onload="checkCookie('')">
+    @if (ViewBag.lstPais != null)
+    {
+        var listaPaises = ViewBag.lstPais;
+        <div class="row">
+
+            <div class="col-md-4">
+                <h2>Lista Paises</h2>
+                <ul class="list-group" id="OpcionPais1">
+                    @foreach (var pais in listaPaises)
+                    {
+                        <li class="list-group-item">
+                            <input class="form-check-input me-1" name="OpcionPais" type="checkbox" value=" @pais.uctry_title" aria-label="...">
+                            @pais.uctry_title
+                        </li>
+                    }
+                </ul>
+
+            </div>
+            <form method="post" action="@Url.Action("MostrarPais","Home")">
+                <div class="modal fade" id="modalPais" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <input id="PaisSeleccionado" name="PaisSeleccionado" type="hidden" value="">
+                                <select class="form-select" aria-label="Default select example" Id="cboPais">
+                                    <option selected>Seleccione un país</option>
+
+                                    @foreach (var pais in listaPaises)
+                                    {
+                                        <option value="@pais.uctry_code">@pais.uctry_title</option>
+
+
+                                    }
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    Cerrar
+                                </button>
+                                <button type="submit" class="btn btn-danger" id="btnRedirigir">
+                                    Redirigir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+
+
+    }
+</body>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //muestra el modal despues de 3 seg. de renderizar la página.
+        setTimeout(function () {
+            $("#modalPais").modal("show");
+        }, 3000);
+
+        $("#btnRedirigir").click(function (event) {
+
+
+            //var cod = document.getElementById("cboPais").value;
+            var combo = document.getElementById("cboPais");
+            var selected = combo.options[combo.selectedIndex].text;
+            $("#PaisSeleccionado").val(selected);
+        });
+
+
+        //guarda la lista de los paises seleccionados.
+        $('[name="OpcionPais"]').click(function () {
+
+            var arr = $('[name="OpcionPais"]:checked').map(function () {
+                return this.value;
+            }).get();
+
+            var str = arr.join(',');
+
+            $('#arr').text(JSON.stringify(arr));
+
+            $('#str').text(str);
+           //agrega la cadena a la cookie
+            checkCookie(str);
+        });
+    });
+
+</script>
